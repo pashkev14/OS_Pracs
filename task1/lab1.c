@@ -35,13 +35,13 @@ int main() {
 	puts("Программа начала работу.\r\n");
 	int *exitcode1, *exitcode2;
 	pthread_t id1, id2;
+	pthread_attr_t attr1, attr2;
+	size_t size1, size2;
 	targs args1, args2;
-	args1.flag = 0;
-	args1.sym = '1';
-	args2.flag = 0;
-	args2.sym = '2';
-	pthread_create(&id1, NULL, proc1, &args1);
-	pthread_create(&id2, NULL, proc2, &args2);
+	args1.flag = 0; args1.sym = '1';
+	args2.flag = 0; args2.sym = '2';
+	pthread_create(&id1, &attr1, proc1, &args1);
+	pthread_create(&id2, &attr2, proc2, &args2);
 	puts("Программа ждет нажатия клавиши.\r\n");
 	getchar();
 	puts("Клавиша нажата.\r\n");
@@ -49,8 +49,12 @@ int main() {
 	args2.flag = 1;
 	pthread_join(id1, (void**)&exitcode1);
 	pthread_join(id2, (void**)&exitcode2);
+	pthread_attr_getstacksize(&attr1, &size1);
+	pthread_attr_getstacksize(&attr2, &size2);
 	printf("Код завершения потока 1: %p\r\n", exitcode1);
+	printf("Размер стека потока 1: %li\r\n", size1);
 	printf("Код завершения потока 2: %p\r\n", exitcode2);
+	printf("Размер стека потока 2: %li\r\n", size2);
 	puts("Программа завершила работу.\r\n");
 	return 0;
 }
