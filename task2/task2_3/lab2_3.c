@@ -10,7 +10,6 @@
 int flag1 = 0, flag2 = 0;
 int i, j;
 pthread_mutex_t mutex;
-struct timespec tp;
 
 void sig_handler(int signo) {
 	printf("\r\nCaught SIGINT, code %d\r\n", signo);
@@ -22,6 +21,7 @@ void* proc1(void* args) {
 	puts("Поток 1 начал работу.\r\n");
 	while (flag1 == 0) {
 		while (flag1 == 0) {
+			struct timespec tp;
 			clock_gettime(CLOCK_REALTIME, &tp);
 			tp.tv_sec += 1;
 			int rv = pthread_mutex_timedlock(&mutex, &tp);
@@ -47,6 +47,7 @@ void* proc2(void* args) {
 	puts("\r\nПоток 2 начал работу.\r\n");
 	while (flag2 == 0) {
 		while (flag2 == 0) {
+			struct timespec tp;
 			clock_gettime(CLOCK_REALTIME, &tp);
 			tp.tv_sec += 1;
 			int rv = pthread_mutex_timedlock(&mutex, &tp);
