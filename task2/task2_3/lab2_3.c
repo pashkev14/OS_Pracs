@@ -41,6 +41,7 @@ void* proc1(void* args) {
 		sleep(1);
 	}
 	puts("\r\nПоток 1 закончил работу.\r\n");
+	pthread_exit(NULL);
 }
 
 void* proc2(void* args) {
@@ -67,6 +68,7 @@ void* proc2(void* args) {
 		sleep(1);
 	}
 	puts("\r\nПоток 2 закончил работу.\r\n");
+	pthread_exit(NULL);
 }
 
 int main() {
