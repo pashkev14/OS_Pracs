@@ -58,19 +58,19 @@ int main(int argc, char* argv[]) {
 	puts("Программа начала работу.\r\n");
 	pthread_t id1, id2;
 	int rv;
-	if (argc == 0) { // default call, if no args provided
+	if (argc == 1) { // default call, if no args provided
 		rv = pipe(pipefd);
 		fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
 		fcntl(pipefd[1], F_SETFL, O_NONBLOCK);
 	}
 	else {
-		if (strcmp(argv[0], "1\0") == 0) {
+		if (strcmp(argv[1], "1\0") == 0) {
 			rv = pipe(pipefd);
 		}
-		else if (strcmp(argv[0], "2\0") == 0) {
+		else if (strcmp(argv[1], "2\0") == 0) {
 			rv = pipe2(pipefd, O_NONBLOCK);
 		}
-		else if (strcmp(argv[0], "3\0") == 0) {
+		else if (strcmp(argv[1], "3\0") == 0) {
 			rv = pipe(pipefd);
 			fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
 			fcntl(pipefd[1], F_SETFL, O_NONBLOCK);
