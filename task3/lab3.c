@@ -53,13 +53,29 @@ void* proc2(void* args) {
 	pthread_exit(NULL);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	setlocale(LC_ALL, "RUS");
 	puts("Программа начала работу.\r\n");
 	pthread_t id1, id2;
-	int rv = pipe(pipefd);
-	fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
-	fcntl(pipefd[1], F_SETFL, O_NONBLOCK);
+	int rv;
+	if (argc == 0) { // default call, if no args provided
+		rv = pipe(pipefd);
+		fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
+		fcntl(pipefd[1], F_SETFL, O_NONBLOCK);
+	}
+	else {
+		if (strcmp(argv[0], "1\0") == 0) {
+			rv = pipe(pipefd);
+		}
+		else if (strcmp(argv[0], "2\0") == 0) {
+			rv = pipe2(pipefd, O_NONBLOCK);
+		}
+		else if (strcmp(argv[0], "3\0") == 0) {
+			rv = pipe(pipefd);
+			fcntl(pipefd[0], F_SETFL, O_NONBLOCK);
+			fcntl(pipefd[1], F_SETFL, O_NONBLOCK);
+		}
+	}
 	puts("Программа ждет нажатия клавиши.\r\n");
 	pthread_create(&id1, NULL, proc1, NULL);
 	pthread_create(&id2, NULL, proc2, NULL);
