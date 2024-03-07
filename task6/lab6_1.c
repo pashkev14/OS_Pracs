@@ -50,6 +50,7 @@ int generate_message(char* buf) {
 void* proc(void* args) {
 	puts("Программа 1: поток записи начал свою работу.\r\n");
 	while (flag == 0) {
+		puts("Программа 1 захватила семафор записи.\r\n");
 		int rv = generate_message(buf);
 		if (rv < 0) {
 			perror("Программа 1: ошибка генерации сообщения");
@@ -57,9 +58,9 @@ void* proc(void* args) {
 		memcpy(addr, buf, rv);
 		printf("Сгенерировано и записано сообщение: %s\r\n", buf);
 		sem_post(writer_sem);
-		puts("Программа 1 освободила семафор записи\r\n");
+		puts("\r\nПрограмма 1 освободила семафор записи.\r\n");
 		sem_wait(reader_sem);
-		puts("Программа 1 ждет освобождения семафора чтения\r\n");
+		puts("Программа 1 ждет освобождения семафора чтения.\r\n");
 		sleep(1);
 	}
 	puts("Программа 1: поток записи закончил свою работу.\r\n");
@@ -73,8 +74,8 @@ int main() {
 	fd = shm_open(mem_name, O_CREAT | O_RDWR, 0644);
 	ftruncate(fd, mem_size);
 	addr = mmap(0, mem_size, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
-	writer_sem = sem_open(writer_sem_name, O_CREAT, 0644, 1);
-	reader_sem = sem_open(reader_sem_name, O_CREAT, 0644, 1);
+	writer_sem = sem_open(writer_sem_name, O_CREAT, 0644, 0);
+	reader_sem = sem_open(reader_sem_name, O_CREAT, 0644, 0);
 	pthread_create(&thread, NULL, proc, NULL);
 	puts("Программа 1 ждет нажатия на клавишу.\r\n");
 	getchar();

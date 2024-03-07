@@ -41,12 +41,14 @@ void sig_handler(int signo) {
 void* proc(void* args) {
 	puts("Программа 2: поток чтения начал свою работу.\r\n");
 	while (flag == 0) {
+		puts("Программа 2 ждет освобождения семафора записи.\r\n");
 		sem_wait(writer_sem);
-		puts("Программа 2 ждет освобождения семафора записи\r\n");
+		puts("Программа 2 захватила семафор чтения.\r\n");
 		memcpy(buf, addr, 256);
 		printf("Считано сообщение: %s\r\n", buf);
 		sem_post(reader_sem);
-		puts("Программа 2 освободила семафор чтения");
+		puts("\r\nПрограмма 2 освободила семафор чтения.\r\n");
+		sleep(1);
 	}
 	puts("Программа 2: поток чтения закончил свою работу.\r\n");
 	pthread_exit(NULL);
@@ -59,8 +61,8 @@ int main() {
 	fd = shm_open(mem_name, O_CREAT | O_RDWR, 0644);
 	ftruncate(fd, mem_size);
 	addr = mmap(0, mem_size, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
-	writer_sem = sem_open(writer_sem_name, O_CREAT, 0644, 1);
-	reader_sem = sem_open(reader_sem_name, O_CREAT, 0644, 1);
+	writer_sem = sem_open(writer_sem_name, O_CREAT, 0644, 0);
+	reader_sem = sem_open(reader_sem_name, O_CREAT, 0644, 0);
 	pthread_create(&thread, NULL, proc, NULL);
 	puts("Программа 2 ждет нажатия на клавишу.\r\n");
 	getchar();
