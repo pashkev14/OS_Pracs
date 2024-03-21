@@ -40,6 +40,7 @@ void finisher() {
         perror("Ошибка закрытия соединения с рабочим сокетом");
     }
     pthread_mutex_destroy(&s_mutex);
+    unlink("server_socket.soc");
     close(client_id);
     close(listener_id);
     std::cout << "Программа-сервер закончила работу.\r\n";
@@ -131,6 +132,7 @@ void* connector(void* args) {
 		}
 		else {
 			std::cout << "Программа-сервер: поток ожидания соединений получил прием соединения от клиента.\r\n";
+			printf("Адрес сокета клиента: %d\r\n", getsockname(client_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
 			pthread_create(&receiver_thread, NULL, receiver, NULL);
             pthread_create(&proccessor_thread, NULL, proccessor, NULL);
             std::cout << "Программа-сервер: поток ожидания соединений закончил работу.\r\n";
@@ -165,8 +167,6 @@ int main() {
     if (listen(listener_id, 1) == -1) {
         error_exit("Ошибка перевода слушающего сокета в состояние прослушивания");
     }
-    int addr_len = sizeof(addr);
-    printf("Адрес сокета сервера: %d\r\n", getsockname(listener_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
     pthread_mutex_init(&s_mutex, NULL);
     pthread_create(&connector_thread, NULL, connector, NULL);
     std::cout << "Программа ждет нажатия на клавишу.\r\n";

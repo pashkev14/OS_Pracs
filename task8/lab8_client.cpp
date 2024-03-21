@@ -34,6 +34,7 @@ void finisher() {
     if (shutdown(server_id, 2) == -1) {
         perror("Ошибка закрытия соединения с рабочим сокетом");
     }
+    unlink("client_socket.soc");
     close(server_id);
     std::cout << "Программа-клиент закончила работу.\r\n";
 }
@@ -100,8 +101,6 @@ void* connector(void* args) {
         }
         else {
         	std::cout << "Программа-клиент: поток установил соединение с сервером.\r\n";
-        	int addr_len = sizeof(addr);
-        	printf("Адрес сокета сервера: %d\r\n", getsockname(server_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
             pthread_create(&sender_thread, NULL, sender, NULL);
             pthread_create(&receiver_thread, NULL, receiver, NULL);
             std::cout << "Программа-клиент: поток установления соединения закончил работу.\r\n";
@@ -123,6 +122,15 @@ int main() {
         error_exit("Ошибка создания сокета для работы с сервером");
     }
     fcntl(server_id, F_SETFL, O_NONBLOCK);
+    sockaddr_un addr;
+    addr.sun_family = AF_UNIX;
+    sprintf(addr.sun_path, "client_socket.soc");
+    if (bind(server_id, (sockaddr*)&addr, sizeof(addr)) == -1) {
+        error_exit("Ошибка привязки сокета к адресу");
+    }
+    std::cout << "Сокет для работы с сервером был успешно привязан к адресу.\r\n";
+    int addr_len = sizeof(addr);
+    printf("Адрес сокета: %d\r\n", getsockname(server_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
     pthread_create(&connector_thread, NULL, connector, NULL);
 	std::cout << "Программа ждет нажатия на клавишу.\r\n";
     getchar();
