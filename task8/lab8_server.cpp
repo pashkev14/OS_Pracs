@@ -132,7 +132,7 @@ void* connector(void* args) {
 		}
 		else {
 			std::cout << "Программа-сервер: поток ожидания соединений получил прием соединения от клиента.\r\n";
-			printf("Адрес сокета клиента: %d\r\n", getsockname(client_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
+			printf("Адрес сокета клиента: %s\r\n", addr.sun_path);
 			pthread_create(&receiver_thread, NULL, receiver, NULL);
             pthread_create(&proccessor_thread, NULL, proccessor, NULL);
             std::cout << "Программа-сервер: поток ожидания соединений закончил работу.\r\n";

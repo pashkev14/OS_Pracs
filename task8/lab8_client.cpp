@@ -130,7 +130,8 @@ int main() {
     }
     std::cout << "Сокет для работы с сервером был успешно привязан к адресу.\r\n";
     int addr_len = sizeof(addr);
-    printf("Адрес сокета: %d\r\n", getsockname(server_id, (sockaddr*)&addr, (socklen_t*)&addr_len));
+    getsockname(server_id, (sockaddr*)&addr, (socklen_t*)&addr_len);
+    printf("Адрес сокета: %s\r\n", addr.sun_path);
     pthread_create(&connector_thread, NULL, connector, NULL);
 	std::cout << "Программа ждет нажатия на клавишу.\r\n";
     getchar();
